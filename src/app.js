@@ -2,7 +2,12 @@ const fastify = require("fastify").default({
   logger: true,
 });
 const mongoose = require("mongoose");
-const { logSuccess, logError, logWarning } = require("./utils/console");
+const {
+  logSuccess,
+  logError,
+  logWarning,
+  logInfo,
+} = require("./utils/console");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5000;
