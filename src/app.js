@@ -19,13 +19,13 @@ mongoose
     logError("Connecting to Database:", process.env.DATABASE_NAME, err)
   );
 
-fastify.get("/", async (request, reply) => {
-  return { message: "Fastify loaded" };
-});
-
 //Routes
 routes.forEach((route) => {
   fastify.route(route);
+});
+
+fastify.get("/*", async (request, reply) => {
+  reply.status(404).send({ message: "Route not found" });
 });
 
 //Start Server

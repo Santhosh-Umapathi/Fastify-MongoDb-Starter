@@ -7,7 +7,7 @@ const { logError } = require("../utils/console");
 const getAllCourses = async (req, reply) => {
   try {
     const courses = await Course.find();
-    return { message: " Success", courses };
+    reply.status(200).send({ message: "Success", courses });
   } catch (error) {
     logError(null, error);
     throw error;
@@ -20,10 +20,13 @@ const getCourse = async (req, reply) => {
 
   try {
     const course = await Course.findById(courseId);
-    return { message: " Success", course };
+    if (!course) {
+      reply.status(500).send({ message: "Error, Course Not found" });
+    }
+    reply.status(200).send({ message: "Success", course });
   } catch (error) {
     logError(null, error);
-    throw error;
+    reply.status(500).send({ message: "Error, Course Not found", error });
   }
 };
 
@@ -34,10 +37,10 @@ const addCourse = async (req, reply) => {
   try {
     const newCourse = new Course({ name, title, price, releaseYear });
     newCourse.save();
-    return { message: " Success", course: newCourse };
+    reply.status(200).send({ message: "Success", course: newCourse });
   } catch (error) {
     logError(null, error);
-    throw error;
+    reply.status(500).send({ message: "Error, Adding new course", error });
   }
 };
 
@@ -56,10 +59,10 @@ const updateCourse = async (req, reply) => {
       },
       { new: true }
     );
-    return { message: " Success", course: updatedCourse };
+    reply.status(200).send({ message: "Success", course: updatedCourse });
   } catch (error) {
     logError(null, error);
-    throw error;
+    reply.status(500).send({ message: "Error, Updating course", error });
   }
 };
 
@@ -69,10 +72,10 @@ const deleteCourse = async (req, reply) => {
 
   try {
     const response = await Course.findByIdAndDelete(courseId);
-    return { message: " Success", response };
+    reply.status(200).send({ message: "Success", response });
   } catch (error) {
     logError(null, error);
-    throw error;
+    reply.status(500).send({ message: "Error, Deleting course", error });
   }
 };
 
