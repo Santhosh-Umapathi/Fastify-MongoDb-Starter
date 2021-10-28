@@ -1,3 +1,4 @@
+//Custom Console logs
 const logSuccess = (message, ...rest) =>
   console.log("\u001b[1;32m[SUCCESS]: " + message + "\u001b[0;32m " + rest);
 
