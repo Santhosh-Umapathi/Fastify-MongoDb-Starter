@@ -1,29 +1,28 @@
-const fastify = require("fastify").default({
-  logger: false,
-});
+const fastify = require("fastify").default();
 const mongoose = require("mongoose");
 const { logSuccess, logError } = require("./utils/console");
 require("dotenv").config();
 
 //Routes
-const routes = require("./routes");
+const { CourseRoutes } = require("./routes");
 
-const PORT = process.env.PORT || 5000;
-const url = `mongodb+srv://${process.env.MONGO_USER_NAME}:${process.env.MONGO_PASSWORD}@playground-cluster.liar9.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`;
+//Constants
+const { PORT, MONGO_DB_URL } = require("./constants");
 
 //Initialize DB connection
 mongoose
-  .connect(url)
+  .connect(MONGO_DB_URL)
   .then(() => logSuccess("Connected to Database:", process.env.DATABASE_NAME))
   .catch((err) =>
     logError("Connecting to Database:", process.env.DATABASE_NAME, err)
   );
 
 //Routes
-routes.forEach((route) => {
-  fastify.route(route);
+CourseRoutes.forEach((options) => {
+  fastify.route(options);
 });
 
+//Unhandled Routes
 fastify.get("/*", async (request, reply) => {
   reply.status(404).send({ message: "Route not found" });
 });
