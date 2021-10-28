@@ -7,7 +7,7 @@ const { logError } = require("../utils/console");
 const getAllCourses = async (req, reply) => {
   try {
     const courses = await Course.find();
-    reply.code(200).json({ message: " Success", courses });
+    return { message: " Success", courses };
   } catch (error) {
     logError(null, error);
     throw error;
@@ -20,8 +20,7 @@ const getCourse = async (req, reply) => {
 
   try {
     const course = await Course.findById(courseId);
-
-    reply.code(200).json({ message: "Success", course });
+    return { message: " Success", course };
   } catch (error) {
     logError(null, error);
     throw error;
@@ -35,7 +34,7 @@ const addCourse = async (req, reply) => {
   try {
     const newCourse = new Course({ name, title, price, releaseYear });
     newCourse.save();
-    reply.code(200).json({ message: "Add Success", course: newCourse });
+    return { message: " Success", course: newCourse };
   } catch (error) {
     logError(null, error);
     throw error;
@@ -57,7 +56,7 @@ const updateCourse = async (req, reply) => {
       },
       { new: true }
     );
-    reply.code(200).json({ message: "Update Success", course: updatedCourse });
+    return { message: " Success", course: updatedCourse };
   } catch (error) {
     logError(null, error);
     throw error;
@@ -70,8 +69,7 @@ const deleteCourse = async (req, reply) => {
 
   try {
     const response = await Course.findByIdAndDelete(courseId);
-
-    reply.code(200).json({ message: "Delete Success", response });
+    return { message: " Success", response };
   } catch (error) {
     logError(null, error);
     throw error;
