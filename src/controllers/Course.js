@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 //Model
-const { Course } = require("../models");
+const { Course, User } = require("../models");
 //Utils
 const { logError, logInfo } = require("../utils/console");
 
@@ -33,17 +33,30 @@ const getCourse = async (req, reply) => {
 
 //Add New Course
 const addCourse = async (req, reply) => {
-  const { name, title, price, releaseYear } = req.body;
+  const { name, title, price, releaseYear, creator } = req.body;
 
   try {
+    const createdUser = await User.findById(creator);
+
+    if (!createdUser) {
+      reply.status(500).send({ message: "Error, Creator not found" });
+    }
+
     let newCourse = new Course({
       name,
       title,
       price,
       releaseYear,
+      creator,
     });
 
-    newCourse.save();
+    const session = await mongoose.startSession();
+    await session.startTransaction();
+    newCourse.save({ session });
+
+    createdUser.courses.push(newCourse);
+    await createdUser.save({ session });
+    await session.commitTransaction();
 
     reply.status(200).send({ message: "Success", course: newCourse });
   } catch (error) {

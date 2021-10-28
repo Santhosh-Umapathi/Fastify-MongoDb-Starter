@@ -4,7 +4,7 @@ const { logSuccess, logError } = require("./utils/console");
 require("dotenv").config();
 
 //Routes
-const { CourseRoutes } = require("./routes");
+const { CourseRoutes, UserRoutes } = require("./routes");
 
 //Constants
 const { PORT, MONGO_DB_URL } = require("./constants");
@@ -19,6 +19,10 @@ mongoose
 
 //Routes
 CourseRoutes.forEach((options) => {
+  fastify.route(options);
+});
+
+UserRoutes.forEach((options) => {
   fastify.route(options);
 });
 

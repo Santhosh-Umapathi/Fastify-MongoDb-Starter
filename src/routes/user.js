@@ -1,42 +1,42 @@
 //Controllers
 const {
-  Course: { addCourse, deleteCourse, getAllCourses, getCourse, updateCourse },
+  User: { addUser, deleteUser, getAllUsers, getUser, updateUser },
 } = require("../controllers");
 
 //Constants
 const { URL_PREFIX } = require("../constants");
 
-const courseRoutes = [
+const userRoutes = [
   {
     method: "GET",
-    url: URL_PREFIX + "/courses",
+    url: URL_PREFIX + "/users",
     preHandler: async (request, reply) => {}, // E.g. check authentication
-    handler: getAllCourses,
+    handler: getAllUsers,
   },
   {
     method: "GET",
-    url: URL_PREFIX + "/courses/:id",
+    url: URL_PREFIX + "/users/:id",
     preHandler: async (request, reply) => {},
-    handler: getCourse,
+    handler: getUser,
   },
   {
     method: "POST",
-    url: URL_PREFIX + "/courses",
+    url: URL_PREFIX + "/users",
     preHandler: async (request, reply) => {},
-    handler: addCourse,
+    handler: addUser,
   },
   {
     method: "PUT",
-    url: URL_PREFIX + "/courses/:id",
+    url: URL_PREFIX + "/users/:id",
     preHandler: async (request, reply) => {},
-    handler: updateCourse,
+    handler: updateUser,
   },
   {
     method: "DELETE",
-    url: URL_PREFIX + "/courses/:id",
+    url: URL_PREFIX + "/users/:id",
     preHandler: async (request, reply) => {},
-    handler: deleteCourse,
+    handler: deleteUser,
   },
 ];
 
-module.exports = courseRoutes;
+module.exports = userRoutes;
