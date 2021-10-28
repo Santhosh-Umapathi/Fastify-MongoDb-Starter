@@ -7,4 +7,6 @@ const CourseSchema = new mongoose.Schema({
   releaseYear: { type: Number },
 });
 
+CourseSchema.set("toJSON", { virtuals: true });
+
 module.exports = CourseSchema;

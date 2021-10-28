@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
-
+//Model
 const { Course } = require("../models");
-const { logError } = require("../utils/console");
+//Utils
+const { logError, logInfo } = require("../utils/console");
 
 //Get All courses
 const getAllCourses = async (req, reply) => {
@@ -35,8 +36,15 @@ const addCourse = async (req, reply) => {
   const { name, title, price, releaseYear } = req.body;
 
   try {
-    const newCourse = new Course({ name, title, price, releaseYear });
+    let newCourse = new Course({
+      name,
+      title,
+      price,
+      releaseYear,
+    });
+
     newCourse.save();
+
     reply.status(200).send({ message: "Success", course: newCourse });
   } catch (error) {
     logError(null, error);
