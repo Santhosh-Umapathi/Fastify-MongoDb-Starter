@@ -33,7 +33,7 @@ const userRoutes = [
   },
   {
     method: "DELETE",
-    url: URL_PREFIX + "/users/:id",
+    url: URL_PREFIX + "/users",
     preHandler: async (request, reply) => {},
     handler: deleteUser,
   },

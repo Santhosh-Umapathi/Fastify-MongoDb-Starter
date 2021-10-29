@@ -33,7 +33,7 @@ const courseRoutes = [
   },
   {
     method: "DELETE",
-    url: URL_PREFIX + "/courses/:id",
+    url: URL_PREFIX + "/courses",
     preHandler: async (request, reply) => {},
     handler: deleteCourse,
   },

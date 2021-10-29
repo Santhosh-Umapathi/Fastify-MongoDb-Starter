@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 //Model
-const { Course, User } = require("../models");
+const { Course } = require("../models");
 //Utils
 const { logError, logInfo } = require("../utils/console");
+const { findUserById } = require("../utils/findUser");
 
 //Get All courses
 const getAllCourses = async (req, reply) => {
@@ -31,17 +32,13 @@ const getCourse = async (req, reply) => {
   }
 };
 
-//Add New Course
+//Add New Course & Add to user
 const addCourse = async (req, reply) => {
   const { name, title, price, releaseYear, creator } = req.body;
 
+  const createdUser = await findUserById(creator, reply);
+
   try {
-    const createdUser = await User.findById(creator);
-
-    if (!createdUser) {
-      reply.status(500).send({ message: "Error, Creator not found" });
-    }
-
     let newCourse = new Course({
       name,
       title,
@@ -51,16 +48,16 @@ const addCourse = async (req, reply) => {
     });
 
     const session = await mongoose.startSession();
-    await session.startTransaction();
-    newCourse.save({ session });
 
-    createdUser.courses.push(newCourse);
-    await createdUser.save({ session });
-    await session.commitTransaction();
+    await session.withTransaction(async () => {
+      await newCourse.save();
+      createdUser.courses.push(newCourse); //Adding item to an array
+      await createdUser.save();
+    });
 
     reply.status(200).send({ message: "Success", course: newCourse });
   } catch (error) {
-    logError(null, error);
+    logError("Add Course", error);
     reply.status(500).send({ message: "Error, Adding new course", error });
   }
 };
@@ -68,6 +65,7 @@ const addCourse = async (req, reply) => {
 //Update Course
 const updateCourse = async (req, reply) => {
   const { id: courseId, name, title, price, releaseYear } = req.body;
+  //Need to check created user with token data
 
   try {
     const updatedCourse = await Course.findByIdAndUpdate(
@@ -87,15 +85,25 @@ const updateCourse = async (req, reply) => {
   }
 };
 
-//Delete Course
+//Delete Course & Delete from user
 const deleteCourse = async (req, reply) => {
-  const courseId = req.params.id;
+  const courseId = req.query.id;
+  const creator = req.query.creator;
+
+  //Need to check created user with token data
+  const createdUser = await findUserById(creator, reply);
 
   try {
-    const response = await Course.findByIdAndDelete(courseId);
-    reply.status(200).send({ message: "Success", response });
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+      await Course.findByIdAndDelete(courseId);
+      await createdUser.courses.pull(courseId);
+      await createdUser.save();
+    });
+
+    reply.status(200).send({ message: "Success" });
   } catch (error) {
-    logError(null, error);
+    logError("Delete course", error);
     reply.status(500).send({ message: "Error, Deleting course", error });
   }
 };

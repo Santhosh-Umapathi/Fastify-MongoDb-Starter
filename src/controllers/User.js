@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const { User } = require("../models");
 //Utils
 const { logError, logInfo } = require("../utils/console");
+const { findUserById } = require("../utils/findUser");
+const { findCourseById } = require("../utils/findCourseById");
 
 //Get All Users
 const getAllUsers = async (req, reply) => {
@@ -15,7 +17,7 @@ const getAllUsers = async (req, reply) => {
   }
 };
 
-//Get Single course
+//Get Single User
 const getUser = async (req, reply) => {
   const userId = req.params.id;
 
@@ -31,7 +33,7 @@ const getUser = async (req, reply) => {
   }
 };
 
-//Add New Course
+//Add New User
 const addUser = async (req, reply) => {
   const { name, email, password } = req.body;
 
@@ -51,7 +53,7 @@ const addUser = async (req, reply) => {
   }
 };
 
-//Update Course
+//Update User
 const updateUser = async (req, reply) => {
   const { id: userId, name, email } = req.body;
 
@@ -71,15 +73,25 @@ const updateUser = async (req, reply) => {
   }
 };
 
-//Delete Course
+//Delete User & his Courses
 const deleteUser = async (req, reply) => {
-  const userId = req.params.id;
+  const userId = req.query.id;
+
+  const user = await findUserById(userId, reply);
 
   try {
-    const response = await User.findByIdAndDelete(userId);
-    reply.status(200).send({ message: "Success", response });
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+      user.courses.forEach(async (course) => {
+        const courseFound = await findCourseById(course, reply);
+        await courseFound.remove();
+      });
+      await User.findByIdAndDelete(userId);
+    });
+
+    reply.status(200).send({ message: "Success" });
   } catch (error) {
-    logError(null, error);
+    logError("Delete User", error);
     reply.status(500).send({ message: "Error, Deleting user", error });
   }
 };
