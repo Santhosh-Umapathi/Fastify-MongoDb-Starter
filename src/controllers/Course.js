@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 //Model
 const { Course } = require("../models");
 //Utils
-const { logError, logInfo } = require("../utils/console");
+const { logError } = require("../utils/console");
 const { findUserById } = require("../utils/findUser");
 
 //Get All courses

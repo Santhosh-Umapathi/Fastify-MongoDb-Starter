@@ -18,18 +18,14 @@ mongoose
   );
 
 //Routes
-CourseRoutes.forEach((options) => {
-  fastify.route(options);
-});
+CourseRoutes.forEach((options) => fastify.route(options));
 
-UserRoutes.forEach((options) => {
-  fastify.route(options);
-});
+UserRoutes.forEach((options) => fastify.route(options));
 
 //Unhandled Routes
-fastify.get("/*", async (request, reply) => {
-  reply.status(404).send({ message: "Route not found" });
-});
+fastify.get("/*", async (request, reply) =>
+  reply.status(404).send({ message: "Route not found" })
+);
 
 //Start Server
 fastify.listen(PORT, () => logSuccess("Listening to PORT:", PORT));
