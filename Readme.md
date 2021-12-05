@@ -35,4 +35,4 @@ Features included inside the project
 - ENV's
 - Custom console logs
 
-###### - App City @2021
+##### &copy; 2021 App City
